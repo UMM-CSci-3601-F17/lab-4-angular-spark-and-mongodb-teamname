@@ -9,4 +9,7 @@
     - Documents are essentially users. We are using them to construct users and put them into the database
     - We use documents to store the data in Mongo format rather than something like SQL
     - We are using them to store user data
-    
+5. What does UserControllerSpec.clearAndPopulateDb do?
+    - It creates a database (test) then adds everything from the user database to it, deletes everything in side, and creates its own users
+6. What's being tested in UserControllerSpec.getUsersWhoAre37()? How is that being tested?
+    - The first thing that is being done is the filtering of users who are 37 years old. Then there are two things being tested. The first one is making sure there are only 2 users in the document and the second is checking that the names match in the document.
