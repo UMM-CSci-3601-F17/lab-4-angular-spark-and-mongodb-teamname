@@ -59,7 +59,7 @@ export class UserListComponent implements OnInit {
 
         this.filteredUsers = this.users;
 
-        //Filter by name
+        //Filter by nameuserListService
         if (searchName != null) {
             searchName = searchName.toLocaleLowerCase();
 

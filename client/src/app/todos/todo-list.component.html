@@ -3,7 +3,7 @@ Add a new Todo:
     <span id="addTodo" class="col-lg-5">
         <span class="input-group">
             <input class="form-control" #input type="text" placeholder="Owner" [(ngModel)]="newTodoOwner">
-            <input class="form-control" #input type="number" placeholder="Status" [(ngModel)]="newTodoStatus">
+            <input class="form-control" #input type="text" placeholder="Status" [(ngModel)]="newTodoStatus">
             <input class="form-control" #input type="text" placeholder="Body" [(ngModel)]="newTodoBody">
             <input class="form-control" #input type="text" placeholder="Category" [(ngModel)]="newTodoCategory">
 
@@ -18,12 +18,12 @@ the typescript. Unless made to do so by defining a todoOwner variable within thi
 <span id="title" class="list-group-item list-group-item-info">
     <span id="list-title"> Todo Owner </span>
     <input id="todoOwner" #input type="text" placeholder="Filter by owner" (input)="todoOwner = $event.target.value">
-    <input id="todoStatus" #input type="number" placeholder="Filter by status" (input)="todoStatus = $event.target.value">
+    <input id="todoStatus" #input type="text" placeholder="Filter by status" (input)="todoStatus = $event.target.value">
 </span>
 
 <ul class="list-group" *ngIf="todos; else todosError">
     <li id="todos" *ngFor="let todo of this.filterTodos(todoOwner, todoStatus)" class="list-group-item">
-        {{ todo.owner }} is {{ todo.status }} years old
+        {{ todo.owner }} is {{ todo.status }}
     </li>
 </ul>
 <!-- Maybe this should be a pop-up instead of just a text message? Not sure. -->
