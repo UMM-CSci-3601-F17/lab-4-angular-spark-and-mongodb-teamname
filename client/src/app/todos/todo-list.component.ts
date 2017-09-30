@@ -36,25 +36,28 @@ export class TodoListComponent implements OnInit {
     }
 
     addNewTodo(owner: string, status: string, body: string, category: string) : void{
+        if(status != null) {
+            //Here we clear all the fields, probably a better way of doing
+            //this could be with clearing forms or something else
+            this.newTodoOwner = null;
+            this.newTodoStatus = null;
+            this.newTodoBody = null;
+            this.newTodoCategory = null;
 
-        //Here we clear all the fields, probably a better way of doing
-        //this could be with clearing forms or something else
-        this.newTodoOwner = null;
-        this.newTodoStatus = null;
-        this.newTodoBody = null;
-        this.newTodoCategory = null;
+            this.todoListService.addNewTodo(owner, status, body, category).subscribe(
+                succeeded => {
+                    this.todoAddSuccess = succeeded;
+                    // Once we added a new User, refresh our user list.
+                    // There is a more efficient method where we request for
+                    // this new user from the server and add it to users, but
+                    // for this lab it's not necessary
+                    this.refreshTodos();
+                });
+        }  else {
+            console.log("Failed to add todo, missing params");
+        }
 
-        this.todoListService.addNewTodo(owner, status, body, category).subscribe(
-            succeeded => {
-                this.todoAddSuccess = succeeded;
-                // Once we added a new User, refresh our user list.
-                // There is a more efficient method where we request for
-                // this new user from the server and add it to users, but
-                // for this lab it's not necessary
-                this.refreshTodos();
-            });
     }
-
 
 
     public filterTodos(searchOwner: string, searchStatus: string, searchBody: string, searchCategory: string): Todo[] {
@@ -74,7 +77,7 @@ export class TodoListComponent implements OnInit {
         if (searchStatus != null) {
             searchStatus = searchStatus.toLocaleLowerCase();
             this.filteredTodos = this.filteredTodos.filter(todo => {
-                return !searchStatus || todo.status.toString().toLowerCase().indexOf(searchStatus) !== -1;
+                return !searchStatus || todo.status.toString().toLowerCase() === searchStatus;
             });
         }
 
