@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {UserListService} from "./todo-list.service";
-import {User} from "./todo";
+import {TodoListService} from "./todo-list.service";
+import {Todo} from "./todo";
 
 @Component({
     selector: 'todo-list-component',
@@ -16,10 +16,10 @@ export class TodoListComponent implements OnInit {
     private todoAddSuccess : Boolean = false;
 
     public todoOwner : string;
-    public todoStatus : boolean;
+    public todoStatus : string;
 
     public newTodoOwner:string;
-    public newTodoStatus: boolean;
+    public newTodoStatus: string;
     public newTodoBody: string;
     public newTodoCategory: string;
 
@@ -33,7 +33,7 @@ export class TodoListComponent implements OnInit {
 
     }
 
-    addNewTodo(owner: string, status: boolean, body: string, category: string) : void{
+    addNewTodo(owner: string, status: string, body: string, category: string) : void{
 
         //Here we clear all the fields, probably a better way of doing
         //this could be with clearing forms or something else
@@ -42,7 +42,7 @@ export class TodoListComponent implements OnInit {
         this.newTodoBody = null;
         this.newTodoCategory = null;
 
-        this.todoListService.addNewUser(owner, status, body, category).subscribe(
+        this.todoListService.addNewTodo(owner, status, body, category).subscribe(
             succeeded => {
                 this.todoAddSuccess = succeeded;
                 // Once we added a new User, refresh our user list.
@@ -55,27 +55,28 @@ export class TodoListComponent implements OnInit {
 
 
 
-    public filterUsers(searchName: string, searchAge: number): User[] {
+    public filterTodos(searchOwner: string, searchStatus: string): Todo[] {
 
-        this.filteredUsers = this.users;
+        this.filteredTodos = this.todos;
 
         //Filter by name
-        if (searchName != null) {
-            searchName = searchName.toLocaleLowerCase();
+        if (searchOwner != null) {
+            searchOwner = searchOwner.toLocaleLowerCase();
 
-            this.filteredUsers = this.filteredUsers.filter(user => {
-                return !searchName || user.name.toLowerCase().indexOf(searchName) !== -1;
+            this.filteredTodos = this.filteredTodos.filter(todo => {
+                return !searchOwner || todo.owner.toLowerCase().indexOf(searchOwner) !== -1;
             });
         }
 
-        //Filter by age
-        if (searchAge != null) {
-            this.filteredUsers = this.filteredUsers.filter(user => {
-                return !searchAge || user.age == searchAge;
+        //Filter by status
+        if (searchStatus != null) {
+            searchStatus = searchStatus.toLocaleLowerCase();
+            this.filteredTodos = this.filteredTodos.filter(todo => {
+                return !searchStatus || todo.status.toString().toLowerCase().indexOf(searchStatus) !== -1;
             });
         }
 
-        return this.filteredUsers;
+        return this.filteredTodos;
     }
 
     /**
@@ -88,10 +89,10 @@ export class TodoListComponent implements OnInit {
         //
         //Subscribe waits until the data is fully downloaded, then
         //performs an action on it (the first lambda)
-        this.userListService.getUsers().subscribe(
-            users => {
-                this.users = users;
-                this.filterUsers(this.userName, this.userAge);
+        this.todoListService.getTodos().subscribe(
+            todos => {
+                this.todos = todos;
+                this.filterTodos(this.todoOwner, this.todoStatus);
             },
             err => {
                 console.log(err);

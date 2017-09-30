@@ -24,7 +24,7 @@ export class TodoListService {
         return this.http.request(this.todoUrl + "/" + id).map(res => res.json());
     }
 
-    addNewTodo(owner: string, status: boolean, insidetext : string, category : string): Observable<Boolean> {
+    addNewTodo(owner: string, status: string, insidetext : string, category : string): Observable<Boolean> {
         const body = {owner:owner, status:status, body:insidetext, category:category};
         console.log(body);
 
