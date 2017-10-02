@@ -17,9 +17,11 @@ export class TodoListComponent implements OnInit {
 
     public todoOwner : string;
     public todoStatus : string;
+    public todoBody: string;
+    public todoCategory: string;
 
     public newTodoOwner:string;
-    public newTodoStatus: string;
+    public newTodoStatus: string = "incomplete";
     public newTodoBody: string;
     public newTodoCategory: string;
 
@@ -34,28 +36,31 @@ export class TodoListComponent implements OnInit {
     }
 
     addNewTodo(owner: string, status: string, body: string, category: string) : void{
+        if(status != null) {
+            //Here we clear all the fields, probably a better way of doing
+            //this could be with clearing forms or something else
+            this.newTodoOwner = null;
+            this.newTodoStatus = null;
+            this.newTodoBody = null;
+            this.newTodoCategory = null;
 
-        //Here we clear all the fields, probably a better way of doing
-        //this could be with clearing forms or something else
-        this.newTodoOwner = null;
-        this.newTodoStatus = null;
-        this.newTodoBody = null;
-        this.newTodoCategory = null;
+            this.todoListService.addNewTodo(owner, status, body, category).subscribe(
+                succeeded => {
+                    this.todoAddSuccess = succeeded;
+                    // Once we added a new User, refresh our user list.
+                    // There is a more efficient method where we request for
+                    // this new user from the server and add it to users, but
+                    // for this lab it's not necessary
+                    this.refreshTodos();
+                });
+        }  else {
+            console.log("Failed to add todo, missing params");
+        }
 
-        this.todoListService.addNewTodo(owner, status, body, category).subscribe(
-            succeeded => {
-                this.todoAddSuccess = succeeded;
-                // Once we added a new User, refresh our user list.
-                // There is a more efficient method where we request for
-                // this new user from the server and add it to users, but
-                // for this lab it's not necessary
-                this.refreshUsers();
-            });
     }
 
 
-
-    public filterTodos(searchOwner: string, searchStatus: string): Todo[] {
+    public filterTodos(searchOwner: string, searchStatus: string, searchBody: string, searchCategory: string): Todo[] {
 
         this.filteredTodos = this.todos;
 
@@ -72,7 +77,25 @@ export class TodoListComponent implements OnInit {
         if (searchStatus != null) {
             searchStatus = searchStatus.toLocaleLowerCase();
             this.filteredTodos = this.filteredTodos.filter(todo => {
-                return !searchStatus || todo.status.toString().toLowerCase().indexOf(searchStatus) !== -1;
+                return !searchStatus || todo.status.toString().toLowerCase() === searchStatus;
+            });
+        }
+
+        //Filter by body
+        if (searchBody != null) {
+            searchBody = searchBody.toLocaleLowerCase();
+
+            this.filteredTodos = this.filteredTodos.filter(todo => {
+                return !searchBody || todo.body.toLowerCase().indexOf(searchBody) !== -1;
+            });
+        }
+
+        //Filter by Category
+        if (searchCategory != null) {
+            searchCategory = searchCategory.toLocaleLowerCase();
+
+            this.filteredTodos = this.filteredTodos.filter(todo => {
+                return !searchCategory || todo.category.toLowerCase().indexOf(searchCategory) !== -1;
             });
         }
 
@@ -83,7 +106,7 @@ export class TodoListComponent implements OnInit {
      * Starts an asynchronous operation to update the users list
      *
      */
-    refreshUsers(): void {
+    refreshTodos(): void {
         //Get Users returns an Observable, basically a "promise" that
         //we will get the data from the server.
         //
@@ -92,7 +115,7 @@ export class TodoListComponent implements OnInit {
         this.todoListService.getTodos().subscribe(
             todos => {
                 this.todos = todos;
-                this.filterTodos(this.todoOwner, this.todoStatus);
+                this.filterTodos(this.todoOwner, this.todoStatus, this.todoBody, this.todoCategory);
             },
             err => {
                 console.log(err);
@@ -100,6 +123,6 @@ export class TodoListComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.refreshUsers();
+        this.refreshTodos();
     }
 }
