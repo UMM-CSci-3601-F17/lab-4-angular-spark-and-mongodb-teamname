@@ -4,7 +4,7 @@ Add a new Todo:
         <span class="input-group">
             <input class="form-control" #input type="text" placeholder="Owner" [(ngModel)]="newTodoOwner">
             <!-- <input class="form-control" #input type="text" placeholder="Status" [(ngModel)]="newTodoStatus"> -->
-            <select class="form-control" #input type="text" placeholder="Status" [(ngModel)]="newTodoStatus">
+            <select class="form-control" #input type="text" [(ngModel)]="newTodoStatus">
                 <option value="incomplete">Incomplete</option>
                 <option value="complete">Complete</option>
             </select>

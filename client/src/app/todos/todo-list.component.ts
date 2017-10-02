@@ -21,7 +21,7 @@ export class TodoListComponent implements OnInit {
     public todoCategory: string;
 
     public newTodoOwner:string;
-    public newTodoStatus: string;
+    public newTodoStatus: string = "incomplete";
     public newTodoBody: string;
     public newTodoCategory: string;
 
