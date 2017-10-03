@@ -105,7 +105,7 @@ public class TodoControllerSpec
     @Test
     public void getUsersWhoArepatsomethingcom() {
         Map<String, String[]> argMap = new HashMap<>();
-        argMap.put("category", new String[] { "pat@something.com" });
+        argMap.put("category", new String[] { "pat@something.com" } );
         String jsonResult = todoController.getTodos(argMap);
         BsonArray docs = parseJsonArray(jsonResult);
 
@@ -122,7 +122,8 @@ public class TodoControllerSpec
     @Test
     public void getUsersWhoAreComplete() {
         Map<String, String[]> argMap = new HashMap<>();
-        argMap.put("status", new String[] { "Frogs, Inc." });
+
+        argMap.put("status", new String[] {"complete"} );
         String jsonResult = todoController.getTodos(argMap);
         BsonArray docs = parseJsonArray(jsonResult);
 
@@ -132,24 +133,24 @@ public class TodoControllerSpec
             .map(TodoControllerSpec::getOwner)
             .sorted()
             .collect(Collectors.toList());
-        List<String> expectedOwners = Arrays.asList("Jamie", "Sam");
+        List<String> expectedOwners = Arrays.asList("Chris", "Sam");
         assertEquals("Names should match", expectedOwners, owners);
     }
 
     @Test
     public void getUsersWhoAreFrogsInc() {
         Map<String, String[]> argMap = new HashMap<>();
-        argMap.put("body", new String[] { "complete" });
+        argMap.put("body", new String[] { "Frogs, Inc." });
         String jsonResult = todoController.getTodos(argMap);
         BsonArray docs = parseJsonArray(jsonResult);
 
-        assertEquals("Should be 1 todo", 1, docs.size());
+        assertEquals("Should be 2 todo", 2, docs.size());
         List<String> owners = docs
             .stream()
             .map(TodoControllerSpec::getOwner)
             .sorted()
             .collect(Collectors.toList());
-        List<String> expectedNames = Arrays.asList("Chris");
+        List<String> expectedNames = Arrays.asList("Jamie", "Sam");
         assertEquals("Names should match", expectedNames, owners);
     }
 
@@ -157,6 +158,6 @@ public class TodoControllerSpec
     public void getSamById() {
         String jsonResult = todoController.getTodo(samsId.toHexString());
         Document sam = Document.parse(jsonResult);
-        assertEquals("Owner should match", "Sam", sam.get("Owner"));
+        assertEquals("Owner should match", "Sam", sam.get("owner"));
     }
 }
