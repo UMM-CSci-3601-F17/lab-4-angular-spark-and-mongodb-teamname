@@ -20,10 +20,6 @@ export class TodoPage {
         return browser.executeScript(setStyle, element(byObject).getWebElement(), 'color: red; background-color: yellow;');
     }
 
-    addAnOwner(owner: string){
-        let input = element(by.id('addowner'))
-    }
-
     getTodoTitle() {
         let title = element(by.id('list-title')).getText();
         this.highlightElement(by.id('list-title'));
@@ -31,20 +27,61 @@ export class TodoPage {
         return title;
     }
 
+    addAOwner(owner: string){
+        let input = element(by.id('addowner'));
+        input.click();
+        input.sendKeys(owner);
+    }
+
+    addAStatus(status: string){
+        let input = element(by.id('addstatus'));
+        input.click();
+        input.sendKeys(status);
+        input.sendKeys(Key.ENTER);
+    }
+
+    addABody(body: string){
+        let input = element(by.id('addbody'));
+        input.click();
+        input.sendKeys(body);
+    }
+
+    addACategory(category: string){
+        let input = element(by.id('addcategory'));
+        input.click();
+        input.sendKeys(category);
+    }
+
+    addTodoButton(){
+        let input = element(by.id('finalizetodo'));
+        input.click();
+    }
+
     typeAOwner(owner: string) {
         let input = element(by.id('todoOwner'));
         input.click();
-        input.sendKeys(name);
+        input.sendKeys(owner);
     }
 
     selectUpKey() {
         browser.actions().sendKeys(Key.ARROW_UP).perform();
     }
 
-    getTodoByStatus() {
+    getTodoByStatus(status: string) {
         let input = element(by.id('todoStatus'));
         input.click();
-        input.sendKeys(Key.TAB);
+        input.sendKeys(status);
+        input.sendKeys(Key.ENTER)
+    }
+
+    typeABody(body: string) {
+        let input = element(by.id('todoBody'));
+        input.sendKeys(body);
+    }
+
+    typeACategory(category: string) {
+        let input = element(by.id('todoCategory'));
+        input.sendKeys(category);
     }
 
     getFirstTodo() {
