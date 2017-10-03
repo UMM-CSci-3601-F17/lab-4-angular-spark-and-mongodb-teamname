@@ -134,12 +134,36 @@ public class TodoController {
     public String todoSummary(Request req, Response res)
     {
         res.type("application/json");
-        long total = todoCollection.count();
+        Map<String, Float> total = todoSummaryTotal(req.queryMap().toMap());
         Map<String, Float> category = todoSummaryCategory(req.queryMap().toMap());
         Map<String, Float> owner = todoSummaryOwner(req.queryMap().toMap());
-        //long completed = todoSummaryStatus().count;
-        //int i = todoSummaryStatus(req.queryMap().toMap());
-        return JSON.serialize(todoSummaryCategory(req.queryMap().toMap()));
+
+        Document Summary = new Document();
+        Summary.append("Total", total);
+        Summary.append("Owner completion", owner);
+        Summary.append("category completion", category);
+        return JSON.serialize(Summary);
+        //return JSON.serialize(todoSummaryCategory(req.queryMap().toMap()));
+    }
+
+    public Map<String, Float> todoSummaryTotal(Map<String, String[]> queryParams){
+        Iterable<Document> totalcomplete = todoCollection.aggregate(
+            Arrays.asList(
+                Aggregates.match(Filters.eq("status", "complete")),
+                Aggregates.group("$status", Accumulators.sum("count",1))
+            ));
+        Map<String, Float> statustotalPercent = new HashMap<>();
+        float total = todoCollection.count();
+        for(Document doc: totalcomplete){
+            statustotalPercent.put(doc.getString("_id"), doc.getInteger("count")/total);
+        }
+        if(statustotalPercent.isEmpty()){
+            float a = 0;
+            statustotalPercent.put("complete", a);
+        }
+
+        return statustotalPercent;
+
     }
 
     public Map<String, Float> todoSummaryOwner(Map<String, String[]> queryParams){
