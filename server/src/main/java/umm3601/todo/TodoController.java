@@ -135,12 +135,14 @@ public class TodoController {
     {
         res.type("application/json");
         long total = todoCollection.count();
+        Map<String, Float> category = todoSummaryCategory(req.queryMap().toMap());
+        Map<String, Float> owner = todoSummaryOwner(req.queryMap().toMap());
         //long completed = todoSummaryStatus().count;
         //int i = todoSummaryStatus(req.queryMap().toMap());
-        return todoSummaryStatus(req.queryMap().toMap());
+        return JSON.serialize(todoSummaryCategory(req.queryMap().toMap()));
     }
 
-    public String todoSummaryStatus(Map<String, String[]> queryParams){
+    public Map<String, Float> todoSummaryOwner(Map<String, String[]> queryParams){
         Iterable<Document> ownerincomplete = todoCollection.aggregate(
             Arrays.asList(
                 Aggregates.match(Filters.eq("status", "incomplete")),
@@ -160,9 +162,6 @@ public class TodoController {
         for (Document doc : ownerincomplete) {
             ownerIncompleteCounts.put(doc.getString("_id"), doc.getInteger("count"));
         }
-        System.out.println(ownerIncompleteCounts);
-        System.out.println(ownerCompleteCounts);
-        long i = todoCollection.count();
         for (String doc : ownerCompleteCounts.keySet()){
             float a;
             if(ownerCompleteCounts.get(doc) != null) {
@@ -186,14 +185,56 @@ public class TodoController {
                 ownerCompletePercents.put(doc, a);
             }
         }
-
-        Document filterDoc = new Document();
-        filterDoc = filterDoc.append("status", "status");
-        return JSON.serialize(ownerCompletePercents);
+        return ownerCompletePercents;
 
     }
 
+    public Map<String, Float> todoSummaryCategory(Map<String, String[]> queryParams){
+        Iterable<Document> categoryincomplete = todoCollection.aggregate(
+            Arrays.asList(
+                Aggregates.match(Filters.eq("status", "incomplete")),
+                Aggregates.group("$category", Accumulators.sum("count",1))
+            ));
+        Iterable<Document> categorycomplete = todoCollection.aggregate(
+            Arrays.asList(
+                Aggregates.match(Filters.eq("status","complete")),
+                Aggregates.group("$category", Accumulators.sum("count", 1))
+            ));
+        Map<String, Integer> categoryCompleteCounts = new HashMap<>();
+        Map<String, Float> categoryCompletePercents = new HashMap<>();
+        for(Document doc: categorycomplete){
+            categoryCompleteCounts.put(doc.getString("_id"), doc.getInteger("count"));
+        }
+        Map<String, Integer> categoryIncompleteCounts = new HashMap<>();
+        for (Document doc : categoryincomplete) {
+            categoryIncompleteCounts.put(doc.getString("_id"), doc.getInteger("count"));
+        }
+        for (String doc : categoryCompleteCounts.keySet()){
+            float a;
+            if(categoryCompleteCounts.get(doc) != null) {
+                a = categoryCompleteCounts.get(doc);
+            } else {
+                a = 0;
+            }
+            float b;
+            if(categoryIncompleteCounts.get(doc) != null) {
+                b = categoryIncompleteCounts.get(doc);
+            } else {
+                b = 0;
+            }
+            float c = a+b;
+            categoryCompletePercents.put(doc, a/c);
+        }
 
+        for (String doc : categoryIncompleteCounts.keySet()){
+            if(categoryCompletePercents.get(doc) == null){
+                float a = 0;
+                categoryCompletePercents.put(doc, a);
+            }
+        }
+        return categoryCompletePercents;
+
+    }
 
 
     public String todoDrop(Request req, Response res){
