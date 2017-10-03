@@ -159,7 +159,7 @@ public class TodoController {
         Document Summary = new Document();
         Summary.append("Total", total);
         Summary.append("Owner completion", owner);
-        Summary.append("category completion", category);
+        Summary.append("Category completion", category);
         return JSON.serialize(Summary);
         //return JSON.serialize(todoSummaryCategory(req.queryMap().toMap()));
     }
