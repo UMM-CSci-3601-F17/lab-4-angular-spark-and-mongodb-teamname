@@ -21,8 +21,8 @@ export class TodoPage {
     }
 
     getTodoTitle() {
-        let title = element(by.id('title')).getText();
-        this.highlightElement(by.id('title'));
+        let title = element(by.id('list-title')).getText();
+        this.highlightElement(by.id('list-title'));
 
         return title;
     }
@@ -44,7 +44,7 @@ export class TodoPage {
     }
 
     getFirstTodo() {
-        let user = element(by.id('todos')).getText();
+        let todo = element(by.id('todos')).getText();
         this.highlightElement(by.id('todos'));
 
         return todo;

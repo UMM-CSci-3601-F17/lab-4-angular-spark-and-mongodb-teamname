@@ -1,3 +1,4 @@
+/*
 import {UserPage} from './user-list.po';
 import {browser, protractor} from 'protractor';
 
@@ -50,3 +51,4 @@ describe('angular-spark-lab', () => {
 
     });
 });
+*/
