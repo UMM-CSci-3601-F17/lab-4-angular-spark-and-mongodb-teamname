@@ -2,7 +2,7 @@ Add a new Todo:
 <span class="row">
     <span id="addTodo" class="col-lg-5">
         <span class="input-group">
-            <input class="form-control" #input type="text" placeholder="Owner" [(ngModel)]="newTodoOwner">
+            <input id="addowner" class="form-control" #input type="text" placeholder="Owner" [(ngModel)]="newTodoOwner">
             <!-- <input class="form-control" #input type="text" placeholder="Status" [(ngModel)]="newTodoStatus"> -->
             <select class="form-control" #input type="text" [(ngModel)]="newTodoStatus">
                 <option value="incomplete">Incomplete</option>

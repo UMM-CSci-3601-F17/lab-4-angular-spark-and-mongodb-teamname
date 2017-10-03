@@ -1,10 +1,9 @@
-/*
 import {browser, element, by} from 'protractor';
 import {Key} from "selenium-webdriver";
 
-export class UserPage {
+export class TodoPage {
     navigateTo() {
-        return browser.get('/users');
+        return browser.get('/todos');
     }
 
     //http://www.assertselenium.com/protractor/highlight-elements-during-your-protractor-test-run/
@@ -21,15 +20,19 @@ export class UserPage {
         return browser.executeScript(setStyle, element(byObject).getWebElement(), 'color: red; background-color: yellow;');
     }
 
-    getUserTitle() {
-        let title = element(by.id('title')).getText();
-        this.highlightElement(by.id('title'));
+    addAnOwner(owner: string){
+        let input = element(by.id('addowner'))
+    }
+
+    getTodoTitle() {
+        let title = element(by.id('list-title')).getText();
+        this.highlightElement(by.id('list-title'));
 
         return title;
     }
 
-    typeAName(name: string) {
-        let input = element(by.id('userName'));
+    typeAOwner(owner: string) {
+        let input = element(by.id('todoOwner'));
         input.click();
         input.sendKeys(name);
     }
@@ -38,17 +41,16 @@ export class UserPage {
         browser.actions().sendKeys(Key.ARROW_UP).perform();
     }
 
-    getUserByAge() {
-        let input = element(by.id('userName'));
+    getTodoByStatus() {
+        let input = element(by.id('todoStatus'));
         input.click();
         input.sendKeys(Key.TAB);
     }
 
-    getFirstUser() {
-        let user = element(by.id('users')).getText();
-        this.highlightElement(by.id('users'));
+    getFirstTodo() {
+        let todo = element(by.id('todos')).getText();
+        this.highlightElement(by.id('todos'));
 
-        return user;
+        return todo;
     }
 }
-*/
