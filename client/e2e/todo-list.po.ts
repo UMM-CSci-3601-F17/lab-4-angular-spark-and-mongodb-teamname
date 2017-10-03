@@ -20,6 +20,10 @@ export class TodoPage {
         return browser.executeScript(setStyle, element(byObject).getWebElement(), 'color: red; background-color: yellow;');
     }
 
+    addAnOwner(owner: string){
+        let input = element(by.id('addowner'))
+    }
+
     getTodoTitle() {
         let title = element(by.id('list-title')).getText();
         this.highlightElement(by.id('list-title'));
