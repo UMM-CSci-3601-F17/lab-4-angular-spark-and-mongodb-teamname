@@ -5,19 +5,26 @@ import com.mongodb.*;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Accumulators;
+import com.mongodb.client.model.Aggregates;
+import com.mongodb.client.model.Filters;
 import com.mongodb.util.JSON;
 import org.bson.Document;
 import org.bson.types.ObjectId;
 import spark.Request;
 import spark.Response;
 
+
+import java.security.Key;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
 import static com.mongodb.client.model.Filters.eq;
 
 /**
- * Controller that manages requests for info about users.
+ * Controller that manages requests for info about todos.
  */
 public class TodoController {
 
@@ -26,9 +33,9 @@ public class TodoController {
     private final MongoCollection<Document> todoCollection;
 
     /**
-     * Construct a controller for users.
+     * Construct a controller for todos.
      *
-     * @param database the database containing user data
+     * @param database the database containing todo data
      */
     public TodoController(MongoDatabase database) {
         gson = new Gson();
@@ -38,11 +45,11 @@ public class TodoController {
 
 
     /**
-     * Get a JSON response with a list of all the users in the database.
+     * Get a JSON response with a list of all the todos in the database.
      *
      * @param req the HTTP request
      * @param res the HTTP response
-     * @return one user in JSON formatted string and if it fails it will return text with a different HTTP status code
+     * @return one todo in JSON formatted string and if it fails it will return text with a different HTTP status code
      */
     public String getTodo(Request req, Response res){
         res.type("application/json");
@@ -67,6 +74,8 @@ public class TodoController {
             return "";
         }
     }
+
+
 
 
     /**
@@ -105,21 +114,177 @@ public class TodoController {
 
     /**
      * @param queryParams
-     * @return an array of Users in a JSON formatted string
+     * @return an array of Todos in a JSON formatted string
      */
     public String getTodos(Map<String, String[]> queryParams) {
 
         Document filterDoc = new Document();
 
-        //if (queryParams.containsKey("age")) {
-            //int targetAge = Integer.parseInt(queryParams.get("age")[0]);
-            //filterDoc = filterDoc.append("age", targetAge);
-        //}
+        if (queryParams.containsKey("owner")) {
+            String targetOwner = queryParams.get("owner")[0];
+            filterDoc = filterDoc.append("owner", targetOwner);
+        }
+
+        if (queryParams.containsKey("status")) {
+            String targetStatus = queryParams.get("status")[0];
+            filterDoc = filterDoc.append("status", targetStatus);
+        }
+        if (queryParams.containsKey("body")) {
+            String targetBody = queryParams.get("body")[0];
+            filterDoc = filterDoc.append("body", targetBody);
+        }
+        if (queryParams.containsKey("category")) {
+            String targetCategory = queryParams.get("category")[0];
+            filterDoc = filterDoc.append("category", targetCategory);
+        }
 
         //FindIterable comes from mongo, Document comes from Gson
         FindIterable<Document> matchingTodos = todoCollection.find(filterDoc);
 
         return JSON.serialize(matchingTodos);
+    }
+
+    /**
+     * @param req
+     * @param res
+     * @return an array of todos in JSON formatted String
+     */
+    public String todoSummary(Request req, Response res)
+    {
+        res.type("application/json");
+        Map<String, Float> total = todoSummaryTotal(req.queryMap().toMap());
+        Map<String, Float> category = todoSummaryCategory(req.queryMap().toMap());
+        Map<String, Float> owner = todoSummaryOwner(req.queryMap().toMap());
+
+        Document Summary = new Document();
+        Summary.append("Total", total);
+        Summary.append("Owner completion", owner);
+        Summary.append("Category completion", category);
+        return JSON.serialize(Summary);
+        //return JSON.serialize(todoSummaryCategory(req.queryMap().toMap()));
+    }
+
+    public Map<String, Float> todoSummaryTotal(Map<String, String[]> queryParams){
+        Iterable<Document> totalcomplete = todoCollection.aggregate(
+            Arrays.asList(
+                Aggregates.match(Filters.eq("status", "complete")),
+                Aggregates.group("$status", Accumulators.sum("count",1))
+            ));
+        Map<String, Float> statustotalPercent = new HashMap<>();
+        float total = todoCollection.count();
+        for(Document doc: totalcomplete){
+            statustotalPercent.put(doc.getString("_id"), doc.getInteger("count")/total);
+        }
+        if(statustotalPercent.isEmpty()){
+            float a = 0;
+            statustotalPercent.put("complete", a);
+        }
+
+        return statustotalPercent;
+
+    }
+
+    public Map<String, Float> todoSummaryOwner(Map<String, String[]> queryParams){
+        Iterable<Document> ownerincomplete = todoCollection.aggregate(
+            Arrays.asList(
+                Aggregates.match(Filters.eq("status", "incomplete")),
+                Aggregates.group("$owner", Accumulators.sum("count",1))
+            ));
+        Iterable<Document> ownercomplete = todoCollection.aggregate(
+            Arrays.asList(
+                Aggregates.match(Filters.eq("status","complete")),
+                Aggregates.group("$owner", Accumulators.sum("count", 1))
+            ));
+        Map<String, Integer> ownerCompleteCounts = new HashMap<>();
+        Map<String, Float> ownerCompletePercents = new HashMap<>();
+        for(Document doc: ownercomplete){
+            ownerCompleteCounts.put(doc.getString("_id"), doc.getInteger("count"));
+        }
+        Map<String, Integer> ownerIncompleteCounts = new HashMap<>();
+        for (Document doc : ownerincomplete) {
+            ownerIncompleteCounts.put(doc.getString("_id"), doc.getInteger("count"));
+        }
+        for (String doc : ownerCompleteCounts.keySet()){
+            float a;
+            if(ownerCompleteCounts.get(doc) != null) {
+                a = ownerCompleteCounts.get(doc);
+            } else {
+                a = 0;
+            }
+            float b;
+            if(ownerIncompleteCounts.get(doc) != null) {
+                b = ownerIncompleteCounts.get(doc);
+            } else {
+                b = 0;
+            }
+            float c = a+b;
+            ownerCompletePercents.put(doc, a/c);
+        }
+
+        for (String doc : ownerIncompleteCounts.keySet()){
+            if(ownerCompletePercents.get(doc) == null){
+                float a = 0;
+                ownerCompletePercents.put(doc, a);
+            }
+        }
+        return ownerCompletePercents;
+
+    }
+
+    public Map<String, Float> todoSummaryCategory(Map<String, String[]> queryParams){
+        Iterable<Document> categoryincomplete = todoCollection.aggregate(
+            Arrays.asList(
+                Aggregates.match(Filters.eq("status", "incomplete")),
+                Aggregates.group("$category", Accumulators.sum("count",1))
+            ));
+        Iterable<Document> categorycomplete = todoCollection.aggregate(
+            Arrays.asList(
+                Aggregates.match(Filters.eq("status","complete")),
+                Aggregates.group("$category", Accumulators.sum("count", 1))
+            ));
+        Map<String, Integer> categoryCompleteCounts = new HashMap<>();
+        Map<String, Float> categoryCompletePercents = new HashMap<>();
+        for(Document doc: categorycomplete){
+            categoryCompleteCounts.put(doc.getString("_id"), doc.getInteger("count"));
+        }
+        Map<String, Integer> categoryIncompleteCounts = new HashMap<>();
+        for (Document doc : categoryincomplete) {
+            categoryIncompleteCounts.put(doc.getString("_id"), doc.getInteger("count"));
+        }
+        for (String doc : categoryCompleteCounts.keySet()){
+            float a;
+            if(categoryCompleteCounts.get(doc) != null) {
+                a = categoryCompleteCounts.get(doc);
+            } else {
+                a = 0;
+            }
+            float b;
+            if(categoryIncompleteCounts.get(doc) != null) {
+                b = categoryIncompleteCounts.get(doc);
+            } else {
+                b = 0;
+            }
+            float c = a+b;
+            categoryCompletePercents.put(doc, a/c);
+        }
+
+        for (String doc : categoryIncompleteCounts.keySet()){
+            if(categoryCompletePercents.get(doc) == null){
+                float a = 0;
+                categoryCompletePercents.put(doc, a);
+            }
+        }
+        return categoryCompletePercents;
+
+    }
+
+
+    public String todoDrop(Request req, Response res){
+        //Document summary = new Document();
+        res.type("application/json");
+        todoCollection.drop();
+
+        return getTodos(req.queryMap().toMap());
     }
 
     /**
@@ -146,12 +311,12 @@ public class TodoController {
                     String body = dbO.getString("body");
                     String category = dbO.getString("category");
 
-                    System.err.println("Adding new user [owner=" + owner + ", status=" + status + " body=" + body + " category=" + category + ']');
+                    System.err.println("Adding new todo [owner=" + owner + ", status=" + status + " body=" + body + " category=" + category + ']');
                     return addNewTodo(owner, status, body, category);
                 }
                 catch(NullPointerException e)
                 {
-                    System.err.println("A value was malformed or omitted, new user request failed.");
+                    System.err.println("A value was malformed or omitted, new todo request failed.");
                     return false;
                 }
 

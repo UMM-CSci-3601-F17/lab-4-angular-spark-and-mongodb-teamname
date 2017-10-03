@@ -69,6 +69,8 @@ public class Server {
 
         get("api/todos", todoController::getTodos);
         get("api/todos/:id", todoController::getTodo);
+        get("api/todoDrop", todoController::todoDrop);
+        get("api/todoSummary", todoController :: todoSummary);
         post("api/todos/new", todoController::addNewTodo);
 
         // An example of throwing an unhandled exception so you can see how the
