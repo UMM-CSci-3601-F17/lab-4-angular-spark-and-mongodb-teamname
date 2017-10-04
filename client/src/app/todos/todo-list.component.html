@@ -6,26 +6,26 @@
             <div class="card-body">
                 <div class="form-group">
                     <label>Add an Owner: </label>
-                    <input class="form-control" #input type="text" placeholder="Owner" [(ngModel)]="newTodoOwner">
+                    <input id="addowner" class="form-control" #input type="text" placeholder="Owner" [(ngModel)]="newTodoOwner">
                 </div>
                 <div class="form-group">
                     <label>Add a Status:</label>
-                    <select class="form-control" #input type="text" [(ngModel)]="newTodoStatus">
+                    <select id="addstatus" class="form-control" #input type="text" [(ngModel)]="newTodoStatus">
                         <option value="incomplete">Incomplete</option>
                         <option value="complete">Complete</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Add a Body:</label>
-                    <textarea rows="3" class="form-control" #input type="text" placeholder="Body" [(ngModel)]="newTodoBody"></textarea>
+                    <textarea id="addbody" rows="3" class="form-control" #input type="text" placeholder="Body" [(ngModel)]="newTodoBody"></textarea>
                 </div>
                 <div class="form-group">
                     <label>Add a Category:</label>
-                    <input class="form-control" #input type="text" placeholder="Category" [(ngModel)]="newTodoCategory">
+                    <input id="addcategory" class="form-control" #input type="text" placeholder="Category" [(ngModel)]="newTodoCategory">
                 </div>
                 <div class="form-group">
                     <br>
-                    <button class="form-control" #input type="button" (click)="this.addNewTodo(newTodoOwner, newTodoStatus, newTodoBody, newTodoCategory)">Add Todo</button>
+                    <button id="finalizetodo" class="form-control" #input type="button" (click)="this.addNewTodo(newTodoOwner, newTodoStatus, newTodoBody, newTodoCategory)">Add Todo</button>
                 </div>
             </div>
         </div>
@@ -38,26 +38,27 @@ the typescript. Unless made to do so by defining a todoOwner variable within thi
 
     <div class="col-md-6">
         <div class="card">
-            <h4 class="card-header">Search for a Todo</h4>
+            <h4 id="list-title" class="card-header">Search for a Todo</h4>
             <div class="card-body">
                 <div class="form-group">
                     <label>Search by Owner: </label>
-                    <input class="form-control" #input type="text" placeholder="Owner" (input)="todoOwner = $event.target.value">
+                    <input id="todoOwner" class="form-control" #input type="text" placeholder="Owner" (input)="todoOwner = $event.target.value">
                 </div>
                 <div class="form-group">
                     <label>Search by Status:</label>
-                    <select class="form-control" #input type="text" (input)="todoStatus= $event.target.value">
+                    <select id="todoStatus" class="form-control" #input type="text" (input)="todoStatus= $event.target.value">
+                        <option value="">Status</option>
                         <option value="incomplete">Incomplete</option>
                         <option value="complete">Complete</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Search by Body:</label>
-                    <textarea class="form-control" #input type="text" placeholder="Body" (input)="todoBody = $event.target.value"> </textarea>
+                    <input id="todoBody" class="form-control" #input type="text" placeholder="Body" (input)="todoBody = $event.target.value">
                 </div>
                 <div class="form-group">
                     <label>Search by Category:</label>
-                    <input class="form-control" #input type="text" placeholder="Category" (input)="todoCategory = $event.target.value">
+                    <input id="todoCategory" class="form-control" #input type="text" placeholder="Category" (input)="todoCategory = $event.target.value">
                 </div>
             </div>
         </div>

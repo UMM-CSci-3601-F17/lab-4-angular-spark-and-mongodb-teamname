@@ -28,7 +28,7 @@ describe('angular-spark-lab', () => {
 
     it('should get and highlight Todo List attribute ', () => {
         page.navigateTo();
-        expect(page.getTodoTitle()).toEqual('Todo List');
+        expect(page.getTodoTitle()).toEqual('Search for a Todo');
     });
 
     it('should type something in filter owner box and check that it returned correct element', () => {
@@ -49,13 +49,9 @@ describe('angular-spark-lab', () => {
         page.addACategory("groceries");
         page.addTodoButton();
         page.typeAOwner("Blanch");
-        expect(page.getFirstTodo()).toEqual("Owner: Blanch\n" +
-            "\n" +
-            "Status: incomplete\n" +
-            "\n" +
-            "Body: In sunt ex non tempor cillum commodo amet incididunt anim qui commodo quis. Cillum non labore ex sint esse.\n" +
-            "\n" +
-            "Category: software design");
+        expect(page.getFirstTodo()).toEqual("Blanch\n" +
+            "In sunt ex non tempor cillum commodo amet incididunt anim qui commodo quis. Cillum non labore ex sint esse.\n" +
+            "incomplete software design");
     });
 
     it('should select incomplete in the status dropdown and check that it returned the correct element', () => {
@@ -76,13 +72,9 @@ describe('angular-spark-lab', () => {
         page.addACategory("groceries");
         page.addTodoButton();
         page.getTodoByStatus("i");
-        expect(page.getFirstTodo()).toEqual("Owner: Blanch\n" +
-            "\n" +
-            "Status: incomplete\n" +
-            "\n" +
-            "Body: In sunt ex non tempor cillum commodo amet incididunt anim qui commodo quis. Cillum non labore ex sint esse.\n" +
-            "\n" +
-            "Category: software design")
+        expect(page.getFirstTodo()).toEqual("Blanch\n" +
+            "In sunt ex non tempor cillum commodo amet incididunt anim qui commodo quis. Cillum non labore ex sint esse.\n" +
+            "incomplete software design")
     });
 
     it('should type Proident cupidatat exercitation id ullamco magna do qui aliquip id. Eiusmod labore non nostrud culpa duis incididunt incididunt esse occaecat amet officia. into the body and check that it returned the correct element', () => {
@@ -103,13 +95,9 @@ describe('angular-spark-lab', () => {
         page.addACategory("groceries");
         page.addTodoButton();
         page.typeABody("Proident cupidatat exercitation id ullamco magna do qui aliquip id. Eiusmod labore non nostrud culpa duis incididunt incididunt esse occaecat amet officia.");
-        expect(page.getFirstTodo()).toEqual("Owner: Workman\n" +
-            "\n" +
-            "Status: incomplete\n" +
-            "\n" +
-            "Body: Proident cupidatat exercitation id ullamco magna do qui aliquip id. Eiusmod labore non nostrud culpa duis incididunt incididunt esse occaecat amet officia.\n" +
-            "\n" +
-            "Category: homework")
+        expect(page.getFirstTodo()).toEqual("Workman\n" +
+            "Proident cupidatat exercitation id ullamco magna do qui aliquip id. Eiusmod labore non nostrud culpa duis incididunt incididunt esse occaecat amet officia.\n" +
+            "incomplete homework")
     });
 
     it('should type groceries and check that it returned the correct element', ()=>{
@@ -130,13 +118,9 @@ describe('angular-spark-lab', () => {
         page.addACategory("groceries");
         page.addTodoButton();
         page.typeACategory("groceries");
-        expect(page.getFirstTodo()).toEqual("Owner: Blanch\n" +
-            "\n" +
-            "Status: complete\n" +
-            "\n" +
-            "Body: Aliqua esse aliqua veniam id nisi ea. Ullamco Lorem ex aliqua aliquip cupidatat incididunt reprehenderit voluptate ad nisi elit dolore laboris.\n" +
-            "\n" +
-            "Category: groceries")
+        expect(page.getFirstTodo()).toEqual("Blanch\n" +
+            "Aliqua esse aliqua veniam id nisi ea. Ullamco Lorem ex aliqua aliquip cupidatat incididunt reprehenderit voluptate ad nisi elit dolore laboris.\n" +
+            "complete groceries")
     });
 });
 
