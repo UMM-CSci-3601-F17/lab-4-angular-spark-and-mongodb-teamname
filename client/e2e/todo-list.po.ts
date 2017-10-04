@@ -71,7 +71,7 @@ export class TodoPage {
         let input = element(by.id('todoStatus'));
         input.click();
         input.sendKeys(status);
-        input.sendKeys(Key.ENTER)
+        input.sendKeys(Key.ENTER);
     }
 
     typeABody(body: string) {
