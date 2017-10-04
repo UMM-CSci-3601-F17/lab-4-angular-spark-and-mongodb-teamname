@@ -16,8 +16,8 @@ export class TodoListService {
     }
 
     getTodos(): Observable<Todo[]> {
-        let observable: Observable<any> = this.http.request(this.todoUrl);
-        return observable.map(res => res.json());
+            let observable: Observable<any> = this.http.request(this.todoUrl);
+            return observable.map(res => res.json());
     }
 
     getTodoById(id: string): Observable<Todo> {

@@ -1,3 +1,4 @@
+/*
 import {browser, element, by} from 'protractor';
 import {Key} from "selenium-webdriver";
 
@@ -50,3 +51,4 @@ export class UserPage {
         return user;
     }
 }
+*/
