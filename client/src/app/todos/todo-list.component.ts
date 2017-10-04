@@ -36,7 +36,7 @@ export class TodoListComponent implements OnInit {
     }
 
     addNewTodo(owner: string, status: string, body: string, category: string) : void{
-        if(status != null) {
+        if(status != null && owner != null && body != null && category != null) {
             //Here we clear all the fields, probably a better way of doing
             //this could be with clearing forms or something else
             this.newTodoOwner = null;
